@@ -1,0 +1,5 @@
+@import "tailwindcss";
+@config "../tailwind.config.js";
+
+/* Base styles that cannot use @apply safely in v4 without proper importing */
+/* Classes have been moved to index.html <body> */
