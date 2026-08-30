@@ -28,24 +28,7 @@ import NotFound from './pages/public/NotFound';
 import NotAuthorized from './pages/public/NotAuthorized';
 import { ProtectedRoute } from './components/layout/ProtectedRoute';
 
-// Temporary home component to test design system
-function Home() {
-  return (
-    <div className="flex flex-col items-center justify-center py-20 text-center">
-      <h1 className="text-4xl font-extrabold tracking-tight text-gray-900 sm:text-5xl md:text-6xl">
-        <span className="block">Launch Your Career with</span>
-        <span className="block text-primary-600">InternSync</span>
-      </h1>
-      <p className="mt-3 max-w-md mx-auto text-base text-gray-500 sm:text-lg md:mt-5 md:text-xl md:max-w-3xl">
-        The ultimate platform connecting ambitious students with top employers. Find internships, jobs, and kickstart your future.
-      </p>
-      <div className="mt-10 flex gap-4 justify-center">
-        <Button variant="primary" size="lg">Get Started</Button>
-        <Button variant="outline" size="lg">Browse Listings</Button>
-      </div>
-    </div>
-  );
-}
+import Home from './pages/public/Home';
 
 function App() {
   return (
