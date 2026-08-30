@@ -1,0 +1,7 @@
+"use strict";
+// Utility files live here — pure functions shared across the codebase.
+// Planned utils:
+//   - AppError.js      (custom error class with statusCode)
+//   - asyncHandler.js  (wraps async route handlers to forward errors)
+//   - paginate.js      (builds Sequelize limit/offset from page/limit query params)
+//   - pick.js          (safely pick allowed fields from request body)

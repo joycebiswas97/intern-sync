@@ -1,0 +1,67 @@
+/**
+ * .sequelizerc
+ * ─────────────────────────────────────────────────────────────────────────────
+ * Tells the sequelize-cli where to look for each type of file.
+ * Without this file, the CLI defaults to a flat project structure
+ * (config/config.json, models/, migrations/, seeders/ all at the repo root).
+ * Our project keeps everything under /server/src/, so we override every path.
+ *
+ * IMPORTANT: This file must live in the directory from which you run the CLI.
+ *   cd server && npx sequelize-cli db:migrate      ✅  (reads this file)
+ *   cd /     && npx sequelize-cli db:migrate       ❌  (can't find .sequelizerc)
+ *
+ * Useful CLI commands once this is set up:
+ *   npx sequelize-cli db:migrate                        – run pending migrations
+ *   npx sequelize-cli db:migrate:undo                   – revert latest migration
+ *   npx sequelize-cli db:migrate:undo:all               – revert ALL migrations
+ *   npx sequelize-cli migration:generate --name <name>  – scaffold a new migration file
+ *   npx sequelize-cli seed:generate --name <name>       – scaffold a new seed file
+ *   npx sequelize-cli db:seed:all                       – run all seeders
+ *   npx sequelize-cli db:seed:undo:all                  – undo all seeders
+ *
+ * All four keys below are the only ones the CLI reads from this file.
+ * ─────────────────────────────────────────────────────────────────────────────
+ */
+
+const path = require("path");
+
+module.exports = {
+  /**
+   * config
+   *   Path to the file that exports database connection credentials per
+   *   environment (development / test / production).
+   *   The CLI picks the right env block by reading NODE_ENV.
+   *   We export a plain object (not JSON) so we can pull values from
+   *   process.env — JSON files can't call process.env.
+   */
+  config: path.resolve("src/config", "sequelize.js"),
+
+  /**
+   * models-path
+   *   Where the CLI looks for (and scaffolds) model files.
+   *   Also where src/models/index.js lives — the auto-loader that
+   *   imports every model and runs .associate() on all of them.
+   *   Generated files: src/models/<ModelName>.js
+   */
+  "models-path": path.resolve("src", "models"),
+
+  /**
+   * migrations-path
+   *   Where the CLI reads and writes migration files.
+   *   Each migration is a timestamped JS file with `up` and `down` functions.
+   *   The CLI tracks which migrations have run by writing rows into a
+   *   "SequelizeMeta" table it creates in your database automatically.
+   *   Generated files: src/migrations/YYYYMMDDHHMMSS-<name>.js
+   */
+  "migrations-path": path.resolve("src", "migrations"),
+
+  /**
+   * seeders-path
+   *   Where the CLI reads and writes seeder files.
+   *   Seeders insert deterministic test/demo data. Unlike migrations they
+   *   are not tracked automatically unless you set "seederStorage": "sequelize"
+   *   in the config (src/config/sequelize.js).
+   *   Generated files: src/seeders/YYYYMMDDHHMMSS-<name>.js
+   */
+  "seeders-path": path.resolve("src", "seeders"),
+};

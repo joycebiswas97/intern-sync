@@ -1,0 +1,4 @@
+"use strict";
+// Controller files live here, one file per resource.
+// Each controller exports plain async functions that handle req/res.
+// Example: authController.js, listingController.js

@@ -1,0 +1,4 @@
+"use strict";
+// Route files live here, one file per resource.
+// Example: authRoutes.js, listingRoutes.js, applicationRoutes.js
+// Mount them in app.js with: app.use("/api/auth", require("./authRoutes"));

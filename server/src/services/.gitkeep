@@ -1,0 +1,7 @@
+"use strict";
+// Service files live here — business logic that sits between controllers and models.
+// Planned services:
+//   - emailService.js       (Nodemailer / Resend)
+//   - uploadService.js      (Cloudinary / S3)
+//   - notificationService.js (create in-app notifications)
+//   - tokenService.js       (generate/verify JWT access & refresh tokens)

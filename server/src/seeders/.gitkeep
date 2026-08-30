@@ -1,0 +1,3 @@
+// Seeders live here.
+// Create a new seeder with:
+//   npx sequelize-cli seed:generate --name demo-users
