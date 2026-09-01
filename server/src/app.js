@@ -4,6 +4,7 @@ const helmet = require('helmet');
 const morgan = require('morgan');
 const mongoSanitize = require('express-mongo-sanitize');
 const rateLimit = require('express-rate-limit');
+const cookieParser = require('cookie-parser');
 
 const app = express();
 
@@ -12,6 +13,7 @@ app.use(helmet());
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 // app.use(mongoSanitize());
 app.use(morgan('dev'));
 
@@ -26,5 +28,9 @@ app.use(limiter);
 app.get('/health', (req, res) => {
   res.status(200).json({ message: 'API is running successfully' });
 });
+
+// Routes
+const authRoutes = require('./routes/authRoutes');
+app.use('/api/auth', authRoutes);
 
 module.exports = app;
