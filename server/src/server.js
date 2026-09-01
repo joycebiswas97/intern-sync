@@ -1,34 +1,18 @@
-"use strict";
+require('dotenv').config();
+const connectDB = require('./config/db');
+const app = require('./app');
 
-require("dotenv").config();
+const PORT = process.env.PORT || 5000;
 
-const app = require("./app");
-const { sequelize } = require("./models");
-
-const PORT = parseInt(process.env.PORT, 10) || 5000;
-
-async function startServer() {
-  try {
-    await sequelize.authenticate();
-    console.log("✅  Database connection established.");
-
-    // Sync models in development only (use migrations in staging/production)
-    if (process.env.NODE_ENV === "development") {
-      // Use { alter: true } to non-destructively sync schema changes in dev.
-      // Switch to migrations (npx sequelize-cli db:migrate) before going to prod.
-      await sequelize.sync({ alter: false });
-      console.log("✅  Sequelize models synced.");
-    }
-
+// Start database connection and then start Express server
+connectDB()
+  .then((conn) => {
+    console.log(`MongoDB Connected: ${conn.connection.host}`);
     app.listen(PORT, () => {
-      console.log(`🚀  InternSync API running on http://localhost:${PORT}`);
-      console.log(`    Environment : ${process.env.NODE_ENV || "development"}`);
-      console.log(`    Health check: http://localhost:${PORT}/health`);
+      console.log(`Server is running on port ${PORT}`);
     });
-  } catch (err) {
-    console.error("❌  Failed to start server:", err.message);
+  })
+  .catch((error) => {
+    console.error(`Database connection failed: ${error.message}`);
     process.exit(1);
-  }
-}
-
-startServer();
+  });

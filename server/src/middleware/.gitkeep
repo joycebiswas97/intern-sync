@@ -1,8 +1,0 @@
-"use strict";
-// Middleware files live here.
-// Planned middleware:
-//   - auth.js          (verifyToken, requireRole)
-//   - errorHandler.js  (global Express error handler)
-//   - upload.js        (multer config for resume/logo uploads)
-//   - validate.js      (Joi schema validation wrapper)
-//   - rateLimiter.js   (express-rate-limit presets)
