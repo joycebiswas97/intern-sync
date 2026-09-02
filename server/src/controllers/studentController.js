@@ -2,6 +2,7 @@ const StudentProfile = require("../models/StudentProfile");
 const EmployerProfile = require("../models/EmployerProfile");
 const Application = require("../models/Application");
 const Listing = require("../models/Listing");
+const SavedListing = require("../models/SavedListing");
 const Joi = require("joi");
 const cloudinary = require("../config/cloudinary");
 const streamifier = require("streamifier");
@@ -166,9 +167,29 @@ const uploadResume = async (req, res) => {
   }
 };
 
+const getSavedListings = async (req, res) => {
+  try {
+    const savedListings = await SavedListing.find({ student: req.user._id })
+      .populate({
+        path: "listing",
+        populate: {
+          path: "employer",
+          select: "companyName companyLogoUrl location"
+        }
+      })
+      .sort({ createdAt: -1 });
+    
+    return res.status(200).json(savedListings);
+  } catch (error) {
+    console.error("Get Saved Listings Error:", error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
+
 module.exports = {
   getMyProfile,
   updateMyProfile,
   getStudentProfileById,
-  uploadResume
+  uploadResume,
+  getSavedListings
 };

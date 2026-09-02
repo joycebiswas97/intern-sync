@@ -18,6 +18,7 @@ const handleResumeUpload = (req, res, next) => {
 router.get('/me/profile', requireAuth, requireRole('STUDENT'), getMyProfile);
 router.put('/me/profile', requireAuth, requireRole('STUDENT'), updateMyProfile);
 router.post('/me/resume', requireAuth, requireRole('STUDENT'), handleResumeUpload, uploadResume);
+router.get('/me/saved-listings', requireAuth, requireRole('STUDENT'), getSavedListings);
 router.get('/:id/profile', optionalAuth, getStudentProfileById);
 
 module.exports = router;
