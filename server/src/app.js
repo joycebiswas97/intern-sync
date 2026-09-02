@@ -31,6 +31,11 @@ app.get('/health', (req, res) => {
 
 // Routes
 const authRoutes = require('./routes/authRoutes');
+const studentRoutes = require('./routes/studentRoutes');
+const employerRoutes = require('./routes/employerRoutes');
+
 app.use('/api/auth', authRoutes);
+app.use('/api/students', studentRoutes);
+app.use('/api/employers', employerRoutes);
 
 module.exports = app;

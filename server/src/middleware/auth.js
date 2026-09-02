@@ -64,7 +64,33 @@ const requireRole = (...roles) => {
   };
 };
 
+/**
+ * Middleware to optionally authenticate a user.
+ * Attaches req.user if a valid token is provided, otherwise continues without error.
+ */
+const optionalAuth = async (req, res, next) => {
+  if (
+    req.headers.authorization &&
+    req.headers.authorization.startsWith("Bearer")
+  ) {
+    try {
+      const token = req.headers.authorization.split(" ")[1];
+      const decoded = jwt.verify(token, process.env.JWT_ACCESS_SECRET);
+      const userId = decoded.userId || decoded.id;
+      const user = await User.findById(userId).select("-passwordHash");
+      
+      if (user && !user.isBanned) {
+        req.user = user;
+      }
+    } catch (error) {
+      // Ignore token errors for optional auth
+    }
+  }
+  next();
+};
+
 module.exports = {
   requireAuth,
   requireRole,
+  optionalAuth,
 };
