@@ -14,8 +14,16 @@ const {
 } = require('../controllers/listingController');
 const { requireAuth, requireRole, optionalAuth } = require('../middleware/auth');
 
+const rateLimit = require('express-rate-limit');
+
+const searchLimiter = rateLimit({
+  windowMs: 1 * 60 * 1000, // 1 minute
+  max: 30, // limit each IP to 30 requests per minute for searches
+  message: { message: "Too many search requests, please try again later." }
+});
+
 // Note: Order matters. Put explicit non-id routes before /:id routes
-router.get('/', optionalAuth, getAllListings);
+router.get('/', optionalAuth, searchLimiter, getAllListings);
 router.get('/mine', requireAuth, requireRole('EMPLOYER'), getMyListings);
 
 router.post('/', requireAuth, requireRole('EMPLOYER'), createListing);

@@ -2,6 +2,7 @@ const User = require("../models/User");
 const EmployerProfile = require("../models/EmployerProfile");
 const Listing = require("../models/Listing");
 const Application = require("../models/Application");
+const Joi = require("joi");
 
 // --- Employer Verification ---
 const getPendingEmployers = async (req, res) => {
@@ -15,13 +16,19 @@ const getPendingEmployers = async (req, res) => {
   }
 };
 
+const verifyEmployerSchema = Joi.object({
+  status: Joi.string().valid("APPROVED", "REJECTED").required(),
+  rejectionReason: Joi.string().allow("").optional()
+});
+
 const verifyEmployer = async (req, res) => {
   try {
-    const { status, rejectionReason } = req.body; // status: APPROVED or REJECTED
-
-    if (!["APPROVED", "REJECTED"].includes(status)) {
-      return res.status(400).json({ message: "Status must be APPROVED or REJECTED" });
+    const { error, value } = verifyEmployerSchema.validate(req.body);
+    if (error) {
+      return res.status(400).json({ message: "Validation error", errors: error.details.map(d => d.message) });
     }
+    
+    const { status, rejectionReason } = value;
 
     const employer = await EmployerProfile.findById(req.params.id);
     if (!employer) return res.status(404).json({ message: "Employer profile not found" });
@@ -53,13 +60,19 @@ const getPendingListings = async (req, res) => {
   }
 };
 
+const reviewListingSchema = Joi.object({
+  status: Joi.string().valid("ACTIVE", "REJECTED").required(),
+  rejectionReason: Joi.string().allow("").optional()
+});
+
 const reviewListing = async (req, res) => {
   try {
-    const { status, rejectionReason } = req.body; // status: ACTIVE or REJECTED
-
-    if (!["ACTIVE", "REJECTED"].includes(status)) {
-      return res.status(400).json({ message: "Status must be ACTIVE or REJECTED" });
+    const { error, value } = reviewListingSchema.validate(req.body);
+    if (error) {
+      return res.status(400).json({ message: "Validation error", errors: error.details.map(d => d.message) });
     }
+
+    const { status, rejectionReason } = value;
 
     const listing = await Listing.findById(req.params.id);
     if (!listing) return res.status(404).json({ message: "Listing not found" });

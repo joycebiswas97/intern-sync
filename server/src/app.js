@@ -10,11 +10,25 @@ const app = express();
 
 // Security and utility middlewares
 app.use(helmet());
-app.use(cors());
+app.use(cors({
+  origin: process.env.CLIENT_URL,
+  credentials: true
+}));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
-// app.use(mongoSanitize());
+
+// Express 5 workaround for mongoSanitize TypeError
+app.use((req, res, next) => {
+  Object.defineProperty(req, 'query', {
+    value: { ...req.query },
+    configurable: true,
+    writable: true
+  });
+  next();
+});
+app.use(mongoSanitize());
+
 app.use(morgan('dev'));
 
 // Rate limiting
@@ -39,7 +53,13 @@ const adminRoutes = require('./routes/adminRoutes');
 const notificationRoutes = require('./routes/notificationRoutes');
 const reportRoutes = require('./routes/reportRoutes');
 
-app.use('/api/auth', authRoutes);
+const authLimiter = rateLimit({
+  windowMs: 1 * 60 * 1000, // 1 minute
+  max: 5, // limit each IP to 5 requests per windowMs for auth routes
+  message: { message: "Too many authentication attempts, please try again after a minute" }
+});
+
+app.use('/api/auth', authLimiter, authRoutes);
 app.use('/api/students', studentRoutes);
 app.use('/api/employers', employerRoutes);
 app.use('/api/listings', listingRoutes);
