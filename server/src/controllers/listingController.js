@@ -1,6 +1,8 @@
 const Listing = require("../models/Listing");
 const EmployerProfile = require("../models/EmployerProfile");
 const SavedListing = require("../models/SavedListing");
+const Application = require("../models/Application");
+const StudentProfile = require("../models/StudentProfile");
 const Joi = require("joi");
 
 const listingSchema = Joi.object({
@@ -264,6 +266,46 @@ const unsaveListing = async (req, res) => {
   }
 };
 
+const getListingApplications = async (req, res) => {
+  try {
+    const listingId = req.params.id;
+    const listing = await Listing.findById(listingId);
+    if (!listing) return res.status(404).json({ message: "Listing not found" });
+
+    // Authorization: only ADMIN or the EMPLOYER who owns the listing
+    let isAuthorized = false;
+    if (req.user.role === "ADMIN") {
+      isAuthorized = true;
+    } else if (req.user.role === "EMPLOYER") {
+      const employerProfile = await EmployerProfile.findOne({ user: req.user._id });
+      if (employerProfile && listing.employer.toString() === employerProfile._id.toString()) {
+        isAuthorized = true;
+      }
+    }
+
+    if (!isAuthorized) {
+      return res.status(403).json({ message: "Not authorized to view these applications" });
+    }
+
+    const applications = await Application.find({ listing: listingId })
+      .populate("student", "email")
+      .sort({ createdAt: -1 });
+    
+    // Attach the StudentProfile to each application so the employer can see their full details
+    const populatedApps = await Promise.all(applications.map(async (app) => {
+      const appObj = app.toObject();
+      const profile = await StudentProfile.findOne({ user: app.student._id });
+      appObj.studentProfile = profile;
+      return appObj;
+    }));
+
+    return res.status(200).json(populatedApps);
+  } catch (error) {
+    console.error("Get Listing Applications Error:", error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
+
 module.exports = {
   createListing,
   getMyListings,
@@ -273,5 +315,6 @@ module.exports = {
   closeListing,
   getAllListings,
   saveListing,
-  unsaveListing
+  unsaveListing,
+  getListingApplications
 };

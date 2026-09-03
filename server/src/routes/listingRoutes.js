@@ -9,7 +9,8 @@ const {
   closeListing,
   getAllListings,
   saveListing,
-  unsaveListing
+  unsaveListing,
+  getListingApplications
 } = require('../controllers/listingController');
 const { requireAuth, requireRole, optionalAuth } = require('../middleware/auth');
 
@@ -19,6 +20,7 @@ router.get('/mine', requireAuth, requireRole('EMPLOYER'), getMyListings);
 
 router.post('/', requireAuth, requireRole('EMPLOYER'), createListing);
 router.get('/:id', optionalAuth, getListingById);
+router.get('/:id/applications', requireAuth, getListingApplications); // Auth check handled in controller
 router.put('/:id', requireAuth, updateListing); // Authorization checks (admin vs owner) are handled in the controller
 router.delete('/:id', requireAuth, deleteListing);
 router.patch('/:id/close', requireAuth, closeListing);
