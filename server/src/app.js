@@ -36,6 +36,8 @@ const employerRoutes = require('./routes/employerRoutes');
 const listingRoutes = require('./routes/listingRoutes');
 const applicationRoutes = require('./routes/applicationRoutes');
 const adminRoutes = require('./routes/adminRoutes');
+const notificationRoutes = require('./routes/notificationRoutes');
+const reportRoutes = require('./routes/reportRoutes');
 
 app.use('/api/auth', authRoutes);
 app.use('/api/students', studentRoutes);
@@ -43,5 +45,7 @@ app.use('/api/employers', employerRoutes);
 app.use('/api/listings', listingRoutes);
 app.use('/api/applications', applicationRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/notifications', notificationRoutes);
+app.use('/api/reports', reportRoutes);
 
 module.exports = app;

@@ -3,6 +3,7 @@ const Listing = require("../models/Listing");
 const StudentProfile = require("../models/StudentProfile");
 const EmployerProfile = require("../models/EmployerProfile");
 const Joi = require("joi");
+const { createNotification } = require("../services/notificationService");
 
 const applySchema = Joi.object({
   listingId: Joi.string().required(),
@@ -139,7 +140,7 @@ const updateApplicationStatus = async (req, res) => {
       return res.status(400).json({ message: "Validation error", errors: error.details.map(d => d.message) });
     }
 
-    const application = await Application.findById(req.params.id);
+    const application = await Application.findById(req.params.id).populate("listing", "title");
     if (!application) {
       return res.status(404).json({ message: "Application not found" });
     }
@@ -160,12 +161,21 @@ const updateApplicationStatus = async (req, res) => {
 
     // Append to status history if it changed
     if (application.status !== value.status) {
+      const oldStatus = application.status;
       application.status = value.status;
       application.statusHistory.push({
         status: value.status,
         date: new Date()
       });
       await application.save();
+
+      // Fire and forget notification
+      await createNotification(
+        application.student,
+        "APPLICATION_STATUS_CHANGED",
+        "Application Status Updated",
+        `Your application for ${application.listing.title} has been updated to ${value.status}.`
+      );
     }
 
     return res.status(200).json(application);
