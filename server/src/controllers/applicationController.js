@@ -29,12 +29,12 @@ const applyForListing = async (req, res) => {
       return res.status(400).json({ message: "You must upload a resume to your profile before applying." });
     }
 
-    // 3. Verify listing is OPEN
+    // 3. Verify listing is ACTIVE
     const listing = await Listing.findById(value.listingId);
     if (!listing) {
       return res.status(404).json({ message: "Listing not found." });
     }
-    if (listing.status !== "OPEN") {
+    if (listing.status !== "ACTIVE") {
       return res.status(400).json({ message: "This listing is no longer open for new applications." });
     }
 

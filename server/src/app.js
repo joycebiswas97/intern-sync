@@ -35,11 +35,13 @@ const studentRoutes = require('./routes/studentRoutes');
 const employerRoutes = require('./routes/employerRoutes');
 const listingRoutes = require('./routes/listingRoutes');
 const applicationRoutes = require('./routes/applicationRoutes');
+const adminRoutes = require('./routes/adminRoutes');
 
 app.use('/api/auth', authRoutes);
 app.use('/api/students', studentRoutes);
 app.use('/api/employers', employerRoutes);
 app.use('/api/listings', listingRoutes);
 app.use('/api/applications', applicationRoutes);
+app.use('/api/admin', adminRoutes);
 
 module.exports = app;

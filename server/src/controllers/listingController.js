@@ -180,7 +180,7 @@ const getAllListings = async (req, res) => {
   try {
     const { page = 1, limit = 20, search, type, locationType, experienceLevel, skills } = req.query;
 
-    const query = { status: "OPEN" }; // Only show OPEN listings by default
+    const query = { status: "ACTIVE" }; // Only show ACTIVE approved listings by default
 
     // Text search
     if (search) {
