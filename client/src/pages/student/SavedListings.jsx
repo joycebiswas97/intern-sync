@@ -1,7 +1,7 @@
 import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
-import { getSavedListings } from '../../api/listings';
+import { getSavedListings } from '../../api/students';
 
 import { Card } from '../../components/ui/Card';
 import { Badge } from '../../components/ui/Badge';

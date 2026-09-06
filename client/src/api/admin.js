@@ -3,22 +3,22 @@ import apiClient from './client';
 // -- Queues --
 
 export const getPendingEmployers = async () => {
-  const response = await apiClient.get('/admin/employers/pending');
+  const response = await apiClient.get('/admin/employers?status=PENDING');
   return response.data;
 };
 
 export const verifyEmployer = async ({ id, status, rejectionReason }) => {
-  const response = await apiClient.put(`/admin/employers/${id}/verify`, { status, rejectionReason });
+  const response = await apiClient.patch(`/admin/employers/${id}/verify`, { status, rejectionReason });
   return response.data;
 };
 
 export const getPendingListings = async () => {
-  const response = await apiClient.get('/admin/listings/pending');
+  const response = await apiClient.get('/admin/listings?status=PENDING_REVIEW');
   return response.data;
 };
 
 export const reviewListing = async ({ id, status, rejectionReason }) => {
-  const response = await apiClient.put(`/admin/listings/${id}/review`, { status, rejectionReason });
+  const response = await apiClient.patch(`/admin/listings/${id}/review`, { status, rejectionReason });
   return response.data;
 };
 
@@ -40,14 +40,14 @@ export const getUsers = async (params) => {
 };
 
 export const banUser = async ({ id, isBanned, reason }) => {
-  const response = await apiClient.put(`/admin/users/${id}/ban`, { isBanned, reason });
+  const response = await apiClient.patch(`/admin/users/${id}/ban`, { isBanned, reason });
   return response.data;
 };
 
 // -- Analytics --
 
 export const getAnalyticsSummary = async () => {
-  const response = await apiClient.get('/admin/analytics/summary');
+  const response = await apiClient.get('/admin/analytics');
   return response.data;
 };
 

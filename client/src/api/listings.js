@@ -30,9 +30,9 @@ export const deleteListing = async (id) => {
   return response.data;
 };
 
-/** POST /api/listings/:id/close */
+/** PATCH /api/listings/:id/close */
 export const closeListing = async (id) => {
-  const response = await apiClient.post(`/listings/${id}/close`);
+  const response = await apiClient.patch(`/listings/${id}/close`);
   return response.data;
 };
 
@@ -56,8 +56,3 @@ export const unsaveListing = async (id) => {
   return response.data;
 };
 
-/** GET /api/listings/saved */
-export const getSavedListings = async () => {
-  const response = await apiClient.get('/listings/saved');
-  return response.data;
-};

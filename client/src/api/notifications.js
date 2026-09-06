@@ -6,11 +6,11 @@ export const getNotifications = async () => {
 };
 
 export const markAsRead = async (id) => {
-  const response = await apiClient.put(`/notifications/${id}/read`);
+  const response = await apiClient.patch(`/notifications/${id}/read`);
   return response.data;
 };
 
 export const markAllAsRead = async () => {
-  const response = await apiClient.put('/notifications/read-all');
+  const response = await apiClient.patch('/notifications/mark-all-read');
   return response.data;
 };

@@ -11,13 +11,6 @@ export const apply = async ({ listingId, coverLetter }) => {
   return response.data;
 };
 
-/**
- * GET /api/applications/mine
- */
-export const getMyApplications = async () => {
-  const response = await apiClient.get('/applications/mine');
-  return response.data;
-};
 
 /**
  * POST /api/applications/:id/withdraw
@@ -43,13 +36,13 @@ export const getListingApplications = async ({ listingId, status }) => {
 };
 
 /**
- * PUT /api/applications/:id/status
+ * PATCH /api/applications/:id/status
  * @param {Object} data
  * @param {string} data.id
  * @param {string} data.status
  */
 export const updateApplicationStatus = async ({ id, status }) => {
-  const response = await apiClient.put(`/applications/${id}/status`, { status });
+  const response = await apiClient.patch(`/applications/${id}/status`, { status });
   return response.data;
 };
 
