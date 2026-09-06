@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { getMyProfile, updateMyProfile, getStudentProfileById, uploadResume, getSavedListings } = require('../controllers/studentController');
+const { getMyProfile, updateMyProfile, getStudentProfileById, uploadResume, getSavedListings, getMyApplications } = require('../controllers/studentController');
 const { requireAuth, requireRole, optionalAuth } = require('../middleware/auth');
 const upload = require('../middleware/upload');
 
@@ -19,6 +19,7 @@ router.get('/me/profile', requireAuth, requireRole('STUDENT'), getMyProfile);
 router.put('/me/profile', requireAuth, requireRole('STUDENT'), updateMyProfile);
 router.post('/me/resume', requireAuth, requireRole('STUDENT'), handleResumeUpload, uploadResume);
 router.get('/me/saved-listings', requireAuth, requireRole('STUDENT'), getSavedListings);
+router.get('/me/applications', requireAuth, requireRole('STUDENT'), getMyApplications);
 router.get('/:id/profile', optionalAuth, getStudentProfileById);
 
 module.exports = router;

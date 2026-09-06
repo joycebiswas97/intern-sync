@@ -186,10 +186,24 @@ const getSavedListings = async (req, res) => {
   }
 };
 
+const getMyApplications = async (req, res) => {
+  try {
+    const applications = await Application.find({ student: req.user._id })
+      .populate("listing", "title type workMode location stipendOrSalaryMin stipendOrSalaryMax status")
+      .sort({ createdAt: -1 });
+    
+    return res.status(200).json(applications);
+  } catch (error) {
+    console.error("Get My Applications Error:", error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
+
 module.exports = {
   getMyProfile,
   updateMyProfile,
   getStudentProfileById,
   uploadResume,
-  getSavedListings
+  getSavedListings,
+  getMyApplications
 };
