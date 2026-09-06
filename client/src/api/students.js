@@ -30,3 +30,15 @@ export const getPublicProfile = async (id) => {
   const { data } = await apiClient.get(`/students/${id}/profile`);
   return data;
 };
+
+/** GET /api/students/me/saved-listings */
+export const getSavedListings = async () => {
+  const { data } = await apiClient.get('/students/me/saved-listings');
+  return data;
+};
+
+/** GET /api/students/me/applications */
+export const getMyApplications = async () => {
+  const { data } = await apiClient.get('/students/me/applications');
+  return data;
+};

@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
-import { getMyApplications, withdrawApplication } from '../../api/applications';
+import { withdrawApplication } from '../../api/applications';
+import { getMyApplications } from '../../api/students';
 
 import { Table } from '../../components/ui/Table';
 import { Badge } from '../../components/ui/Badge';
