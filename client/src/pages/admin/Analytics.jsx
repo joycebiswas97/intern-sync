@@ -4,7 +4,7 @@ import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, Legend, ResponsiveContainer,
   LineChart, Line, PieChart, Pie, Cell
 } from 'recharts';
-import { getAnalyticsSummary, getSignups, getApplicationsByStatus, getTopListings } from '../../api/admin';
+import { getAnalytics } from '../../api/admin';
 
 import { Card } from '../../components/ui/Card';
 import { Table } from '../../components/ui/Table';
@@ -13,55 +13,41 @@ import { LoadingSpinner } from '../../components/ui/LoadingSpinner';
 const COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#6366f1', '#8b5cf6'];
 
 export default function AdminAnalytics() {
-  const { data: summary, isLoading: loadSum } = useQuery({
-    queryKey: ['admin', 'analytics', 'summary'],
-    queryFn: getAnalyticsSummary,
-    initialData: () => (process.env.NODE_ENV === 'development' ? {
-      totalUsers: 1250, totalEmployers: 150, totalListings: 430, totalApplications: 3200
-    } : undefined)
+  const { data: rawData, isLoading } = useQuery({
+    queryKey: ['admin', 'analytics'],
+    queryFn: getAnalytics
   });
 
-  const { data: signups, isLoading: loadSignups } = useQuery({
-    queryKey: ['admin', 'analytics', 'signups'],
-    queryFn: () => getSignups({ days: 30 }),
-    initialData: () => (process.env.NODE_ENV === 'development' ? [
-      { date: 'Aug 20', students: 12, employers: 2 },
-      { date: 'Aug 21', students: 18, employers: 3 },
-      { date: 'Aug 22', students: 25, employers: 1 },
-      { date: 'Aug 23', students: 15, employers: 4 },
-      { date: 'Aug 24', students: 30, employers: 2 },
-      { date: 'Aug 25', students: 45, employers: 5 },
-      { date: 'Aug 26', students: 22, employers: 1 }
-    ] : [])
-  });
-
-  const { data: appsByStatus, isLoading: loadApps } = useQuery({
-    queryKey: ['admin', 'analytics', 'applications'],
-    queryFn: getApplicationsByStatus,
-    initialData: () => (process.env.NODE_ENV === 'development' ? [
-      { name: 'APPLIED', value: 1500 },
-      { name: 'SHORTLISTED', value: 800 },
-      { name: 'INTERVIEW', value: 400 },
-      { name: 'OFFERED', value: 150 },
-      { name: 'REJECTED', value: 350 }
-    ] : [])
-  });
-
-  const { data: topListings, isLoading: loadTop } = useQuery({
-    queryKey: ['admin', 'analytics', 'top-listings'],
-    queryFn: getTopListings,
-    initialData: () => (process.env.NODE_ENV === 'development' ? [
-      { id: '1', title: 'Software Eng Intern', companyName: 'Google', applications: 450, views: 1200 },
-      { id: '2', title: 'Product Manager', companyName: 'Meta', applications: 320, views: 900 },
-      { id: '3', title: 'Data Scientist Intern', companyName: 'Netflix', applications: 280, views: 850 },
-      { id: '4', title: 'Frontend Developer', companyName: 'Airbnb', applications: 210, views: 700 },
-      { id: '5', title: 'UX Designer Intern', companyName: 'Apple', applications: 190, views: 600 }
-    ] : [])
-  });
-
-  if (loadSum || loadSignups || loadApps || loadTop) {
+  if (isLoading) {
     return <LoadingSpinner fullPage />;
   }
+
+  // Safely map data from the single API response
+  const summary = {
+    totalUsers: (rawData?.summary?.totalStudents || 0) + (rawData?.summary?.totalEmployers || 0),
+    totalEmployers: rawData?.summary?.totalEmployers || 0,
+    totalListings: rawData?.summary?.totalListings || 0,
+    totalApplications: rawData?.summary?.totalApplications || 0,
+  };
+
+  const signups = (rawData?.signupsOverTime || []).map(item => ({
+    date: item._id,
+    students: item.count,
+    employers: 0 // Mocked since backend currently only gives total count
+  }));
+
+  const appsByStatus = (rawData?.applicationsByStatus || []).map(item => ({
+    name: item._id,
+    value: item.count
+  }));
+
+  const topListings = (rawData?.topListings || []).map(item => ({
+    _id: item.listingId,
+    title: item.title,
+    employer: { companyName: item.companyName },
+    applications: item.applicationCount,
+    views: 0 // Mock views since backend doesn't track it
+  }));
 
   return (
     <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
@@ -166,9 +152,9 @@ export default function AdminAnalytics() {
             </Table.Header>
             <tbody>
               {topListings.map(listing => (
-                <Table.Row key={listing.id}>
+                <Table.Row key={listing._id}>
                   <Table.Cell className="font-medium text-gray-900">{listing.title}</Table.Cell>
-                  <Table.Cell>{listing.companyName}</Table.Cell>
+                  <Table.Cell>{listing.employer?.companyName}</Table.Cell>
                   <Table.Cell className="text-right text-gray-500">{listing.views.toLocaleString()}</Table.Cell>
                   <Table.Cell className="text-right font-medium text-primary-600">{listing.applications.toLocaleString()}</Table.Cell>
                 </Table.Row>

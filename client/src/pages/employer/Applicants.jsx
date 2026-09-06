@@ -28,37 +28,7 @@ export default function Applicants() {
 
   const { data: applicants, isLoading, isError, refetch } = useQuery({
     queryKey: ['applications', 'listing', listingId, filterStatus],
-    queryFn: () => getListingApplications({ listingId, status: filterStatus }),
-    initialData: () => {
-      if (process.env.NODE_ENV === 'development') {
-        let results = [
-          {
-            id: 'app-1',
-            student: { id: 's-1', fullName: 'Alice Smith', email: 'alice@example.com' },
-            coverLetter: 'I love React and would love to work here.',
-            status: 'APPLIED',
-            appliedAt: '2026-08-28T10:00:00Z'
-          },
-          {
-            id: 'app-2',
-            student: { id: 's-2', fullName: 'Bob Jones', email: 'bob@example.com' },
-            coverLetter: 'I have 2 years of experience with Node.js.',
-            status: 'SHORTLISTED',
-            appliedAt: '2026-08-25T14:30:00Z'
-          },
-          {
-            id: 'app-3',
-            student: { id: 's-3', fullName: 'Charlie Davis', email: 'charlie@example.com' },
-            coverLetter: '',
-            status: 'REJECTED',
-            appliedAt: '2026-08-15T09:15:00Z'
-          }
-        ];
-        if (filterStatus) results = results.filter(r => r.status === filterStatus);
-        return results;
-      }
-      return undefined;
-    }
+    queryFn: () => getListingApplications({ listingId, status: filterStatus })
   });
 
   const { mutate: updateStatus } = useMutation({
@@ -68,7 +38,7 @@ export default function Applicants() {
       const previousApplicants = queryClient.getQueryData(['applications', 'listing', listingId, filterStatus]);
       
       queryClient.setQueryData(['applications', 'listing', listingId, filterStatus], old => 
-        old?.map(app => app.id === id ? { ...app, status } : app)
+        old?.map(app => app._id === id ? { ...app, status } : app)
       );
       
       return { previousApplicants };
@@ -155,7 +125,7 @@ export default function Applicants() {
               const allowedStates = getAvailableTransitions(app.status);
               
               return (
-                <Table.Row key={app.id}>
+                <Table.Row key={app._id}>
                   <Table.Cell>
                     <div className="font-medium text-gray-900">{app.student.fullName}</div>
                     <div className="text-sm text-gray-500">{app.student.email}</div>
@@ -180,7 +150,7 @@ export default function Applicants() {
                       <select
                         className="block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
                         value={app.status}
-                        onChange={(e) => handleStatusChange(app.id, e.target.value)}
+                        onChange={(e) => handleStatusChange(app._id, e.target.value)}
                         disabled={app.status === 'REJECTED'}
                       >
                         {STATUS_OPTIONS.map(option => (

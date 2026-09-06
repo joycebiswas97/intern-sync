@@ -18,17 +18,7 @@ export default function CreateListing() {
 
   const { data: profile, isLoading, isError } = useQuery({
     queryKey: ['employerProfile', 'me'],
-    queryFn: getMyProfile,
-    initialData: () => {
-      // Mock data for dev
-      if (process.env.NODE_ENV === 'development') {
-        return {
-          id: 'emp-123',
-          verificationStatus: 'APPROVED', // Mocked to APPROVED so we can test form
-        };
-      }
-      return undefined;
-    }
+    queryFn: getMyProfile
   });
 
   const { mutate: submitListing, isPending } = useMutation({

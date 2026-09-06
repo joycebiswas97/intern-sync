@@ -18,11 +18,7 @@ export default function AdminUsers() {
 
   const { data: users, isLoading } = useQuery({
     queryKey: ['admin', 'users', debouncedSearch],
-    queryFn: () => getUsers({ search: debouncedSearch }),
-    initialData: () => (process.env.NODE_ENV === 'development' ? [
-      { id: 'u-1', email: 'alice@student.com', role: 'STUDENT', fullName: 'Alice Smith', createdAt: '2026-08-01T00:00:00Z', isBanned: false },
-      { id: 'u-2', email: 'hr@techcorp.com', role: 'EMPLOYER', companyName: 'TechCorp', createdAt: '2026-08-05T00:00:00Z', isBanned: true }
-    ] : [])
+    queryFn: () => getUsers({ search: debouncedSearch })
   });
 
   const { mutate: toggleBan } = useMutation({
@@ -64,7 +60,7 @@ export default function AdminUsers() {
               </Table.Header>
               <tbody>
                 {users.map(user => (
-                  <Table.Row key={user.id}>
+                  <Table.Row key={user._id}>
                     <Table.Cell>
                       <div className="font-medium text-gray-900">{user.fullName || user.companyName}</div>
                       <div className="text-sm text-gray-500">{user.email}</div>
@@ -78,7 +74,7 @@ export default function AdminUsers() {
                     </Table.Cell>
                     <Table.Cell>
                       <button
-                        onClick={() => toggleBan({ id: user.id, isBanned: !user.isBanned, reason: user.isBanned ? '' : 'Violation of Terms' })}
+                        onClick={() => toggleBan({ id: user._id, isBanned: !user.isBanned, reason: user.isBanned ? '' : 'Violation of Terms' })}
                         className={`text-sm font-medium focus:outline-none ${user.isBanned ? 'text-green-600 hover:text-green-800' : 'text-red-600 hover:text-red-800'}`}
                       >
                         {user.isBanned ? 'Unban' : 'Ban User'}

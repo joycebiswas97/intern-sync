@@ -11,20 +11,7 @@ import { EmployerProfileForm } from './components/EmployerProfileForm';
 export default function EmployerProfile() {
   const { data: profile, isLoading, isError, refetch } = useQuery({
     queryKey: ['employerProfile', 'me'],
-    queryFn: getMyProfile,
-    initialData: () => {
-      // Mock data for dev
-      if (process.env.NODE_ENV === 'development') {
-        return {
-          id: 'emp-123',
-          companyName: 'Tech Innovators Inc.',
-          industry: 'Software Development',
-          verificationStatus: 'REJECTED', // PENDING, APPROVED, REJECTED
-          rejectionReason: 'Please provide a valid company website and a detailed description.',
-        };
-      }
-      return undefined;
-    }
+    queryFn: getMyProfile
   });
 
   if (isLoading) return <LoadingSpinner fullPage />;

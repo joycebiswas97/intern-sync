@@ -21,34 +21,7 @@ export default function ListingDetail() {
 
   const { data: listing, isLoading, isError, refetch } = useQuery({
     queryKey: ['listing', id],
-    queryFn: async () => {
-      if (process.env.NODE_ENV === 'development') {
-        await new Promise(resolve => setTimeout(resolve, 300));
-        return {
-          id,
-          title: 'Frontend Engineer Intern',
-          type: 'INTERNSHIP',
-          companyName: 'TechCorp Inc.',
-          companyLogoUrl: null,
-          description: 'We are looking for a passionate frontend engineer intern to join our core product team. You will be working with React, Tailwind CSS, and TanStack Query to build beautiful user interfaces.',
-          responsibilities: ['Build reusable UI components', 'Optimize application performance', 'Collaborate with designers'],
-          skillsRequired: ['React', 'JavaScript', 'HTML/CSS', 'Git'],
-          workMode: 'REMOTE',
-          location: '',
-          stipendOrSalaryMin: 4000,
-          stipendOrSalaryMax: 5000,
-          currency: 'USD',
-          durationMonths: 3,
-          openings: 2,
-          applicationDeadline: '2026-12-31T00:00:00Z',
-          perks: ['Flexible hours', 'Mentorship program', 'Free hardware'],
-          status: 'ACTIVE',
-          createdAt: '2026-08-20T00:00:00Z',
-          isSaved: false // Client mock state
-        };
-      }
-      return getListing(id);
-    }
+    queryFn: () => getListing(id)
   });
 
   const { mutate: toggleSave, isPending: isSaving } = useMutation({
@@ -87,15 +60,15 @@ export default function ListingDetail() {
           <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-6">
             <div className="flex items-start gap-6">
               <div className="h-20 w-20 rounded-lg bg-gray-50 border flex items-center justify-center text-gray-400 font-bold text-3xl flex-shrink-0">
-                {listing.companyLogoUrl ? (
-                  <img src={listing.companyLogoUrl} alt="Logo" className="max-h-full max-w-full object-contain" />
+                {listing.employer?.companyLogoUrl ? (
+                  <img src={listing.employer.companyLogoUrl} alt="Logo" className="max-h-full max-w-full object-contain" />
                 ) : (
-                  listing.companyName.charAt(0)
+                  listing.employer?.companyName?.charAt(0) || 'C'
                 )}
               </div>
               <div>
                 <h1 className="text-3xl font-bold text-gray-900 mb-2">{listing.title}</h1>
-                <p className="text-xl text-gray-600 mb-4">{listing.companyName}</p>
+                <p className="text-xl text-gray-600 mb-4">{listing.employer?.companyName}</p>
                 <div className="flex flex-wrap gap-3">
                   <Badge variant="default">{listing.type === 'INTERNSHIP' ? 'Internship' : 'Full-time'}</Badge>
                   <Badge variant="success">{listing.workMode}</Badge>

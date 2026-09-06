@@ -1,5 +1,5 @@
 import React from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Link } from 'react-router-dom';
 import { AppShell } from './components/layout/AppShell';
 import { Button } from './components/ui/Button';
 import Profile from './pages/student/Profile';
@@ -40,8 +40,12 @@ function Home() {
         The ultimate platform connecting ambitious students with top employers. Find internships, jobs, and kickstart your future.
       </p>
       <div className="mt-10 flex gap-4 justify-center">
-        <Button variant="primary" size="lg">Get Started</Button>
-        <Button variant="outline" size="lg">Browse Listings</Button>
+        <Link to="/register">
+          <Button variant="primary" size="lg">Get Started</Button>
+        </Link>
+        <Link to="/listings">
+          <Button variant="outline" size="lg">Browse Listings</Button>
+        </Link>
       </div>
     </div>
   );

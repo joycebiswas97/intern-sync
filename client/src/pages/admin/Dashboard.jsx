@@ -27,26 +27,17 @@ export default function AdminDashboard() {
   
   const { data: employers, isLoading: isLoadingEmp } = useQuery({
     queryKey: ['admin', 'pending-employers'],
-    queryFn: getPendingEmployers,
-    initialData: () => (process.env.NODE_ENV === 'development' ? [
-      { id: 'emp-1', companyName: 'StartupX', industry: 'Software', createdAt: '2026-08-29T10:00:00Z', status: 'PENDING' }
-    ] : [])
+    queryFn: getPendingEmployers
   });
 
   const { data: listings, isLoading: isLoadingList } = useQuery({
     queryKey: ['admin', 'pending-listings'],
-    queryFn: getPendingListings,
-    initialData: () => (process.env.NODE_ENV === 'development' ? [
-      { id: 'list-1', title: 'Data Analyst Intern', companyName: 'DataSys', type: 'INTERNSHIP', createdAt: '2026-08-28T14:00:00Z', status: 'PENDING_REVIEW' }
-    ] : [])
+    queryFn: getPendingListings
   });
 
   const { data: reports, isLoading: isLoadingRep } = useQuery({
     queryKey: ['admin', 'reports'],
-    queryFn: getReports,
-    initialData: () => (process.env.NODE_ENV === 'development' ? [
-      { id: 'rep-1', reporterEmail: 'student@test.com', type: 'SPAM', target: 'TechCorp Job', description: 'Looks like a fake job posting.', status: 'OPEN', createdAt: '2026-08-25T09:00:00Z' }
-    ] : [])
+    queryFn: getReports
   });
 
   // -- Mutations --
@@ -131,14 +122,14 @@ export default function AdminDashboard() {
                 </Table.Row>
               </Table.Header>
               <tbody>
-                {employers.map(emp => (
-                  <Table.Row key={emp.id}>
+                {employers?.map(emp => (
+                  <Table.Row key={emp._id}>
                     <Table.Cell className="font-medium text-gray-900">{emp.companyName}</Table.Cell>
                     <Table.Cell>{emp.industry}</Table.Cell>
                     <Table.Cell>{new Date(emp.createdAt).toLocaleDateString()}</Table.Cell>
                     <Table.Cell className="space-x-2">
-                      <Button variant="outline" size="sm" onClick={() => handleApprove('EMPLOYER', emp.id)}>Approve</Button>
-                      <Button variant="danger" size="sm" onClick={() => setRejectModal({ isOpen: true, type: 'EMPLOYER', id: emp.id, reason: '' })}>Reject</Button>
+                      <Button variant="outline" size="sm" onClick={() => handleApprove('EMPLOYER', emp._id)}>Approve</Button>
+                      <Button variant="danger" size="sm" onClick={() => setRejectModal({ isOpen: true, type: 'EMPLOYER', id: emp._id, reason: '' })}>Reject</Button>
                     </Table.Cell>
                   </Table.Row>
                 ))}
@@ -161,15 +152,15 @@ export default function AdminDashboard() {
                 </Table.Row>
               </Table.Header>
               <tbody>
-                {listings.map(list => (
-                  <Table.Row key={list.id}>
+                {listings?.map(list => (
+                  <Table.Row key={list._id}>
                     <Table.Cell className="font-medium text-gray-900">{list.title}</Table.Cell>
-                    <Table.Cell>{list.companyName}</Table.Cell>
+                    <Table.Cell>{list.employer?.companyName}</Table.Cell>
                     <Table.Cell><Badge>{list.type}</Badge></Table.Cell>
                     <Table.Cell>{new Date(list.createdAt).toLocaleDateString()}</Table.Cell>
                     <Table.Cell className="space-x-2">
-                      <Button variant="outline" size="sm" onClick={() => handleApprove('LISTING', list.id)}>Approve</Button>
-                      <Button variant="danger" size="sm" onClick={() => setRejectModal({ isOpen: true, type: 'LISTING', id: list.id, reason: '' })}>Reject</Button>
+                      <Button variant="outline" size="sm" onClick={() => handleApprove('LISTING', list._id)}>Approve</Button>
+                      <Button variant="danger" size="sm" onClick={() => setRejectModal({ isOpen: true, type: 'LISTING', id: list._id, reason: '' })}>Reject</Button>
                     </Table.Cell>
                   </Table.Row>
                 ))}
@@ -192,15 +183,15 @@ export default function AdminDashboard() {
                 </Table.Row>
               </Table.Header>
               <tbody>
-                {reports.map(rep => (
-                  <Table.Row key={rep.id}>
+                {reports?.map(rep => (
+                  <Table.Row key={rep._id}>
                     <Table.Cell><Badge variant="danger">{rep.type}</Badge></Table.Cell>
                     <Table.Cell className="font-medium">{rep.target}</Table.Cell>
                     <Table.Cell className="max-w-xs truncate" title={rep.description}>{rep.description}</Table.Cell>
                     <Table.Cell>{rep.reporterEmail}</Table.Cell>
                     <Table.Cell className="space-x-2">
-                      <Button variant="outline" size="sm" onClick={() => mutateReport({ id: rep.id, resolution: 'Action Taken' })}>Resolve</Button>
-                      <Button variant="ghost" size="sm" onClick={() => mutateReport({ id: rep.id, resolution: 'Dismissed' })}>Dismiss</Button>
+                      <Button variant="outline" size="sm" onClick={() => mutateReport({ id: rep._id, resolution: 'Action Taken' })}>Resolve</Button>
+                      <Button variant="ghost" size="sm" onClick={() => mutateReport({ id: rep._id, resolution: 'Dismissed' })}>Dismiss</Button>
                     </Table.Cell>
                   </Table.Row>
                 ))}

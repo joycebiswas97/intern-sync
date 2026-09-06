@@ -1,9 +1,10 @@
 import axios from 'axios';
 import { useAuthStore } from '../store/authStore';
-import { refreshToken } from './auth';
+
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
 const apiClient = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:5000/api',
+  baseURL: API_URL,
   headers: {
     'Content-Type': 'application/json',
   },
@@ -32,11 +33,15 @@ apiClient.interceptors.response.use(
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
       try {
-        // Attempt to refresh token
-        const { accessToken } = await refreshToken();
+        // Use bare axios to avoid interceptor loops and circular dependencies
+        const response = await axios.post(`${API_URL}/auth/refresh`, {}, {
+          withCredentials: true
+        });
+        const { accessToken } = response.data;
         
-        // Update token in store (assuming setToken exists in your authStore)
-        useAuthStore.getState().setToken(accessToken);
+        // Update token in store using the existing setAuth method
+        const state = useAuthStore.getState();
+        state.setAuth(state.user, state.role, accessToken);
         
         // Update header for original request and retry
         originalRequest.headers.Authorization = `Bearer ${accessToken}`;

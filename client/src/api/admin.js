@@ -3,7 +3,7 @@ import apiClient from './client';
 // -- Queues --
 
 export const getPendingEmployers = async () => {
-  const response = await apiClient.get('/admin/employers?status=PENDING');
+  const response = await apiClient.get('/admin/employers/pending');
   return response.data;
 };
 
@@ -13,7 +13,7 @@ export const verifyEmployer = async ({ id, status, rejectionReason }) => {
 };
 
 export const getPendingListings = async () => {
-  const response = await apiClient.get('/admin/listings?status=PENDING_REVIEW');
+  const response = await apiClient.get('/admin/listings/pending');
   return response.data;
 };
 
@@ -23,8 +23,7 @@ export const reviewListing = async ({ id, status, rejectionReason }) => {
 };
 
 export const getReports = async () => {
-  const response = await apiClient.get('/admin/reports');
-  return response.data;
+  return []; // Not implemented in backend
 };
 
 export const resolveReport = async ({ id, resolution }) => {
@@ -46,22 +45,7 @@ export const banUser = async ({ id, isBanned, reason }) => {
 
 // -- Analytics --
 
-export const getAnalyticsSummary = async () => {
+export const getAnalytics = async () => {
   const response = await apiClient.get('/admin/analytics');
-  return response.data;
-};
-
-export const getSignups = async (params) => {
-  const response = await apiClient.get('/admin/analytics/signups', { params });
-  return response.data;
-};
-
-export const getApplicationsByStatus = async () => {
-  const response = await apiClient.get('/admin/analytics/applications');
-  return response.data;
-};
-
-export const getTopListings = async () => {
-  const response = await apiClient.get('/admin/analytics/top-listings');
   return response.data;
 };

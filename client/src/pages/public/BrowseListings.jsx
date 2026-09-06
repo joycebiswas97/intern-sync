@@ -13,13 +13,7 @@ import { LoadingSpinner } from '../../components/ui/LoadingSpinner';
 import { ErrorState } from '../../components/ui/ErrorState';
 import { EmptyState } from '../../components/ui/EmptyState';
 
-// Helper mock filter until backend is ready
-const mockListings = [
-  { id: '1', title: 'Frontend Engineer', type: 'JOB', workMode: 'REMOTE', companyName: 'TechCorp', location: 'San Francisco, CA', stipendOrSalaryMin: 80000, currency: 'USD', createdAt: '2026-08-25T00:00:00Z', skillsRequired: ['React', 'JavaScript'] },
-  { id: '2', title: 'Backend Intern', type: 'INTERNSHIP', workMode: 'HYBRID', companyName: 'DataSys', location: 'New York, NY', stipendOrSalaryMin: 3000, currency: 'USD', createdAt: '2026-08-20T00:00:00Z', durationMonths: 6, skillsRequired: ['Node.js', 'Python'] },
-  { id: '3', title: 'UX Designer', type: 'JOB', workMode: 'ONSITE', companyName: 'Designify', location: 'London, UK', stipendOrSalaryMin: 60000, currency: 'GBP', createdAt: '2026-08-28T00:00:00Z', skillsRequired: ['Figma', 'UI/UX'] },
-  { id: '4', title: 'Product Management Intern', type: 'INTERNSHIP', workMode: 'REMOTE', companyName: 'InnovateInc', location: '', stipendOrSalaryMin: 2000, currency: 'USD', createdAt: '2026-08-29T00:00:00Z', durationMonths: 3, skillsRequired: ['Agile', 'Jira'] }
-];
+// Removed mock data
 
 export default function BrowseListings() {
   const [searchTerm, setSearchTerm] = useState('');
@@ -45,27 +39,11 @@ export default function BrowseListings() {
   const { data, isLoading, isError, refetch } = useQuery({
     queryKey: ['listings', 'search', queryParams],
     queryFn: async () => {
-      if (process.env.NODE_ENV === 'development') {
-        // Client-side mock filtering
-        // simulate network delay
-        await new Promise(resolve => setTimeout(resolve, 300));
-        let results = mockListings;
-        if (debouncedSearchTerm) {
-          const lower = debouncedSearchTerm.toLowerCase();
-          results = results.filter(r => r.title.toLowerCase().includes(lower) || r.companyName.toLowerCase().includes(lower));
-        }
-        if (filters.type) results = results.filter(r => r.type === filters.type);
-        if (filters.workMode) results = results.filter(r => r.workMode === filters.workMode);
-        if (filters.location) results = results.filter(r => r.location.toLowerCase().includes(filters.location.toLowerCase()));
-        
-        return {
-          results,
-          total: results.length,
-          page: 1,
-          pages: 1
-        };
-      }
-      return searchListings(queryParams);
+      // Remove empty parameters to clean up URL
+      const cleanParams = Object.fromEntries(
+        Object.entries(queryParams).filter(([_, v]) => v !== '' && v !== null)
+      );
+      return searchListings(cleanParams);
     }
   });
 
@@ -147,7 +125,7 @@ export default function BrowseListings() {
             <LoadingSpinner />
           ) : isError ? (
             <ErrorState title="Failed to load listings" onRetry={refetch} />
-          ) : data?.results?.length === 0 ? (
+          ) : data?.listings?.length === 0 ? (
             <EmptyState
               title="No listings found"
               description="Try adjusting your filters or search terms to find more results."
@@ -155,8 +133,8 @@ export default function BrowseListings() {
             />
           ) : (
             <div className="space-y-4">
-              {data?.results?.map((listing) => (
-                <Link to={`/listings/${listing.id}`} key={listing.id} className="block group">
+              {data?.listings?.map((listing) => (
+                <Link to={`/listings/${listing._id}`} key={listing._id} className="block group">
                   <Card className="hover:border-primary-300 transition-colors">
                     <Card.Content className="p-6">
                       <div className="flex justify-between items-start">
@@ -164,7 +142,7 @@ export default function BrowseListings() {
                           <h3 className="text-xl font-bold text-gray-900 group-hover:text-primary-600 transition-colors">
                             {listing.title}
                           </h3>
-                          <p className="text-gray-600 font-medium mt-1">{listing.companyName}</p>
+                          <p className="text-gray-600 font-medium mt-1">{listing.employer?.companyName}</p>
                           <div className="flex flex-wrap items-center gap-2 mt-3 text-sm text-gray-500">
                             <span className="flex items-center">
                               <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
@@ -186,10 +164,13 @@ export default function BrowseListings() {
                           </div>
                         </div>
                         <div className="flex-shrink-0">
-                          {/* Placeholder for company logo */}
-                          <div className="h-12 w-12 rounded bg-gray-100 flex items-center justify-center text-gray-400 font-bold text-xl">
-                            {listing.companyName.charAt(0)}
-                          </div>
+                          {listing.employer?.companyLogoUrl ? (
+                            <img src={listing.employer.companyLogoUrl} alt="Logo" className="h-12 w-12 rounded object-cover" />
+                          ) : (
+                            <div className="h-12 w-12 rounded bg-gray-100 flex items-center justify-center text-gray-400 font-bold text-xl">
+                              {listing.employer?.companyName?.charAt(0) || 'C'}
+                            </div>
+                          )}
                         </div>
                       </div>
                       
@@ -207,11 +188,11 @@ export default function BrowseListings() {
               ))}
               
               {/* Simple Pagination Stub */}
-              {data?.pages > 1 && (
+              {data?.totalPages > 1 && (
                 <div className="flex justify-between items-center mt-8 pt-4 border-t">
                   <Button variant="outline" disabled={page === 1} onClick={() => setPage(p => p - 1)}>Previous</Button>
-                  <span className="text-sm text-gray-500">Page {page} of {data.pages}</span>
-                  <Button variant="outline" disabled={page === data.pages} onClick={() => setPage(p => p + 1)}>Next</Button>
+                  <span className="text-sm text-gray-500">Page {page} of {data.totalPages}</span>
+                  <Button variant="outline" disabled={page === data.totalPages} onClick={() => setPage(p => p + 1)}>Next</Button>
                 </div>
               )}
             </div>

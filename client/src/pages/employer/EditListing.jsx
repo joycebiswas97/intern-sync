@@ -17,46 +17,14 @@ export default function EditListing() {
   const queryClient = useQueryClient();
   const [toast, setToast] = useState(null);
 
-  // 1. Check employer verification status
   const { data: profile, isLoading: isProfileLoading } = useQuery({
     queryKey: ['employerProfile', 'me'],
-    queryFn: getMyProfile,
-    initialData: () => {
-      if (process.env.NODE_ENV === 'development') {
-        return { verificationStatus: 'APPROVED' };
-      }
-      return undefined;
-    }
+    queryFn: getMyProfile
   });
 
-  // 2. Fetch listing data
   const { data: listing, isLoading: isListingLoading, isError } = useQuery({
     queryKey: ['listing', id],
-    queryFn: () => getListing(id),
-    initialData: () => {
-      // Mock data for dev
-      if (process.env.NODE_ENV === 'development') {
-        return {
-          id,
-          title: 'Frontend React Intern',
-          type: 'INTERNSHIP',
-          description: 'Looking for a talented frontend intern...',
-          responsibilities: ['Build UI components', 'Write tests'],
-          skillsRequired: ['React', 'JavaScript'],
-          workMode: 'REMOTE',
-          stipendOrSalaryMin: 15000,
-          stipendOrSalaryMax: 20000,
-          currency: 'INR',
-          durationMonths: 6,
-          openings: 2,
-          applicationDeadline: '2026-12-31T00:00:00Z',
-          perks: ['Flexible hours'],
-          status: 'REJECTED',
-          rejectionReason: 'Please increase the minimum stipend to meet platform guidelines.',
-        };
-      }
-      return undefined;
-    }
+    queryFn: () => getListing(id)
   });
 
   const { mutate: editListing, isPending } = useMutation({

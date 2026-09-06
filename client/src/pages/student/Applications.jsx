@@ -20,38 +20,7 @@ export default function StudentApplications() {
 
   const { data: applications, isLoading, isError, refetch } = useQuery({
     queryKey: ['applications', 'mine'],
-    queryFn: getMyApplications,
-    initialData: () => {
-      if (process.env.NODE_ENV === 'development') {
-        return [
-          {
-            id: 'app-1',
-            listing: { id: 'list-1', title: 'Frontend Engineer Intern', companyName: 'TechCorp' },
-            status: 'APPLIED',
-            appliedAt: '2026-08-25T10:00:00Z'
-          },
-          {
-            id: 'app-2',
-            listing: { id: 'list-2', title: 'Backend Intern', companyName: 'DataSys' },
-            status: 'SHORTLISTED',
-            appliedAt: '2026-08-20T14:30:00Z'
-          },
-          {
-            id: 'app-3',
-            listing: { id: 'list-3', title: 'UX Designer', companyName: 'Designify' },
-            status: 'REJECTED',
-            appliedAt: '2026-08-15T09:15:00Z'
-          },
-          {
-            id: 'app-4',
-            listing: { id: 'list-4', title: 'Product Manager Intern', companyName: 'InnovateInc' },
-            status: 'OFFERED',
-            appliedAt: '2026-08-01T11:00:00Z'
-          }
-        ];
-      }
-      return undefined;
-    }
+    queryFn: getMyApplications
   });
 
   const { mutate: withdrawMut, isPending: isWithdrawing } = useMutation({
@@ -72,7 +41,7 @@ export default function StudentApplications() {
 
   const confirmWithdraw = () => {
     if (appToWithdraw) {
-      withdrawMut(appToWithdraw.id);
+      withdrawMut(appToWithdraw._id);
     }
   };
 
@@ -115,14 +84,14 @@ export default function StudentApplications() {
           </Table.Header>
           <tbody>
             {applications.map((app) => (
-              <Table.Row key={app.id}>
+              <Table.Row key={app._id}>
                 <Table.Cell>
-                  <Link to={`/listings/${app.listing.id}`} className="font-medium text-primary-600 hover:text-primary-900">
-                    {app.listing.title}
+                  <Link to={`/listings/${app.listing?._id}`} className="font-medium text-primary-600 hover:text-primary-900">
+                    {app.listing?.title}
                   </Link>
                 </Table.Cell>
                 <Table.Cell>
-                  <span className="text-gray-900">{app.listing.companyName}</span>
+                  <span className="text-gray-900">{app.listing?.employer?.companyName}</span>
                 </Table.Cell>
                 <Table.Cell>
                   <span className="text-sm text-gray-700">
@@ -158,7 +127,7 @@ export default function StudentApplications() {
         title="Withdraw Application"
       >
         <p className="text-sm text-gray-500 mb-6">
-          Are you sure you want to withdraw your application for "{appToWithdraw?.listing.title}" at {appToWithdraw?.listing.companyName}? This action cannot be undone.
+          Are you sure you want to withdraw your application for "{appToWithdraw?.listing?.title}" at {appToWithdraw?.listing?.employer?.companyName}? This action cannot be undone.
         </p>
         <div className="flex justify-end space-x-3">
           <Button variant="outline" onClick={() => setAppToWithdraw(null)} disabled={isWithdrawing}>

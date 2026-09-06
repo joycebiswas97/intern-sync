@@ -19,39 +19,7 @@ export default function EmployerListings() {
 
   const { data: listings, isLoading, isError, refetch } = useQuery({
     queryKey: ['employerListings', 'mine'],
-    queryFn: getMyListings,
-    initialData: () => {
-      // Mock data for dev
-      if (process.env.NODE_ENV === 'development') {
-        return [
-          {
-            id: 'list-1',
-            title: 'Frontend React Intern',
-            type: 'INTERNSHIP',
-            status: 'ACTIVE',
-            applicationDeadline: '2026-12-31T00:00:00Z',
-            createdAt: '2026-08-20T00:00:00Z',
-          },
-          {
-            id: 'list-2',
-            title: 'Backend Engineer',
-            type: 'JOB',
-            status: 'PENDING_REVIEW',
-            applicationDeadline: '2026-11-15T00:00:00Z',
-            createdAt: '2026-08-25T00:00:00Z',
-          },
-          {
-            id: 'list-3',
-            title: 'UI/UX Designer',
-            type: 'INTERNSHIP',
-            status: 'DRAFT',
-            applicationDeadline: '2026-10-01T00:00:00Z',
-            createdAt: '2026-08-28T00:00:00Z',
-          }
-        ];
-      }
-      return undefined;
-    }
+    queryFn: getMyListings
   });
 
   const { mutate: closeListingMutation, isPending: isClosing } = useMutation({
@@ -72,7 +40,7 @@ export default function EmployerListings() {
 
   const confirmClose = () => {
     if (listingToClose) {
-      closeListingMutation(listingToClose.id);
+      closeListingMutation(listingToClose._id);
     }
   };
 
@@ -124,7 +92,7 @@ export default function EmployerListings() {
           </Table.Header>
           <tbody>
             {listings.map((listing) => (
-              <Table.Row key={listing.id}>
+              <Table.Row key={listing._id}>
                 <Table.Cell>
                   <div className="font-medium text-gray-900">{listing.title}</div>
                   <div className="text-xs text-gray-500 mt-1">
@@ -145,7 +113,7 @@ export default function EmployerListings() {
                 <Table.Cell>
                   <div className="flex items-center space-x-3">
                     <Link 
-                      to={`/employer/listings/${listing.id}/edit`}
+                      to={`/employer/listings/${listing._id}/edit`}
                       className="text-primary-600 hover:text-primary-900 text-sm font-medium"
                     >
                       Edit
@@ -155,7 +123,7 @@ export default function EmployerListings() {
                       <>
                         <span className="text-gray-300">|</span>
                         <Link 
-                          to={`/employer/listings/${listing.id}/applicants`}
+                          to={`/employer/listings/${listing._id}/applicants`}
                           className="text-blue-600 hover:text-blue-900 text-sm font-medium"
                         >
                           Applicants

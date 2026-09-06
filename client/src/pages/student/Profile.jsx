@@ -11,21 +11,7 @@ import { ProfileForm } from './components/ProfileForm';
 export default function Profile() {
   const { data: profile, isLoading, isError, refetch } = useQuery({
     queryKey: ['studentProfile', 'me'],
-    queryFn: getMyProfile,
-    // Stub data for frontend testing since backend isn't ready
-    initialData: () => {
-      // Remove this when backend is connected
-      if (process.env.NODE_ENV === 'development') {
-        return {
-          id: '123',
-          fullName: 'John Doe',
-          headline: 'Aspiring Frontend Developer',
-          bio: 'Passionate about building intuitive user interfaces.',
-          skills: ['React', 'JavaScript', 'Tailwind'],
-        };
-      }
-      return undefined;
-    }
+    queryFn: getMyProfile
   });
 
   if (isLoading) {
