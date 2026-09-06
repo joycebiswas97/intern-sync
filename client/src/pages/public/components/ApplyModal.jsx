@@ -49,7 +49,7 @@ export function ApplyModal({ isOpen, onClose, listing }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    submitApplication({ listingId: listing.id, coverLetter });
+    submitApplication({ listingId: listing._id, coverLetter });
   };
 
   const handleClose = () => {
@@ -63,7 +63,7 @@ export function ApplyModal({ isOpen, onClose, listing }) {
   if (!isOpen) return null;
 
   return (
-    <Modal isOpen={isOpen} onClose={handleClose} title={`Apply to ${listing?.companyName}`}>
+    <Modal isOpen={isOpen} onClose={handleClose} title={`Apply to ${listing?.employer?.companyName}`}>
       {isLoading ? (
         <div className="py-8"><LoadingSpinner /></div>
       ) : success ? (
@@ -83,7 +83,7 @@ export function ApplyModal({ isOpen, onClose, listing }) {
             </Button>
           </div>
         </div>
-      ) : (!profile?.resumeUrl || !profile?.emailVerified) ? (
+      ) : (!profile?.resumeUrl) ? (
         <div className="py-4">
           <div className="bg-orange-50 border-l-4 border-orange-400 p-4 mb-6">
             <div className="flex">
@@ -97,7 +97,7 @@ export function ApplyModal({ isOpen, onClose, listing }) {
                 <div className="mt-2 text-sm text-orange-700">
                   <p>Before you can apply, you must complete your profile:</p>
                   <ul className="list-disc list-inside mt-1">
-                    {!profile?.emailVerified && <li>Verify your email address</li>}
+                    {/* Email verification commented out */}
                     {!profile?.resumeUrl && <li>Upload a resume</li>}
                   </ul>
                 </div>

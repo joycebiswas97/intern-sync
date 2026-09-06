@@ -13,9 +13,9 @@ const applySchema = Joi.object({
 const applyForListing = async (req, res) => {
   try {
     // 1. Require verified email
-    if (!req.user.isEmailVerified) {
-      return res.status(403).json({ message: "You must verify your email before applying." });
-    }
+    // if (!req.user.isEmailVerified) {
+    //   return res.status(403).json({ message: "You must verify your email before applying." });
+    // }
 
     const { error, value } = applySchema.validate(req.body);
     if (error) {
